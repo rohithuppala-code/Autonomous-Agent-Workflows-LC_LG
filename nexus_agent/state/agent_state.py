@@ -58,3 +58,4 @@ def create_initial_state(user_goal: str, max_revisions: int = 3) -> AgentState:
         "final_artifact": None,
         "logs": [f"🚀 Workflow initialized with goal: '{user_goal}'"],
     }
+

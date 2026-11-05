@@ -5,8 +5,8 @@ A progressive, end-to-end production repository designed to master modern LLM ap
 ---
 
 ## 📚 Zero-to-Hero Story Guides (Start Here!)
-- 🍳 **[LangChain Basics Explained Like a Story](file:///c:/Users/sairo/OneDrive/Documents/LC_LG/LC_BASICS.md)**: Understand the Chef, Recipe Card, and Conveyor Belt in 5 minutes with 0 jargon.
-- 🕸️ **[LangGraph Basics Explained Like a Story](file:///c:/Users/sairo/OneDrive/Documents/LC_LG/LG_BASICS.md)**: Understand State Machines, Nodes, Cycles, and Human-in-the-Loop using the 5-Star Restaurant team.
+- 🍳 **[LangChain Basics Explained Like a Story](LC_BASICS.md)**: Understand the Chef, Recipe Card, and Conveyor Belt in 5 minutes with 0 jargon.
+- 🕸️ **[LangGraph Basics Explained Like a Story](LG_BASICS.md)**: Understand State Machines, Nodes, Cycles, and Human-in-the-Loop using the 5-Star Restaurant team.
 
 ---
 
@@ -15,22 +15,22 @@ A progressive, end-to-end production repository designed to master modern LLM ap
 This repository is divided into two progressive systems:
 
 ```mermaid
-graph TD
-    subgraph Phase 1: CogniFlow (LangChain & LCEL)
-        A[Universal Model Factory] --> B[Pydantic Structured Outputs]
-        B --> C[Parallel Reasoning Chains]
-        C --> D[ReAct Autonomous Agent & Tools]
-        D --> E[Conversational Session Memory]
+flowchart TD
+    subgraph P1["Phase 1: CogniFlow (LangChain & LCEL)"]
+        A["Universal Model Factory"] --> B["Pydantic Structured Outputs"]
+        B --> C["Parallel Reasoning Chains"]
+        C --> D["ReAct Autonomous Agent & Tools"]
+        D --> E["Conversational Session Memory"]
     end
 
-    subgraph Phase 2: NexusAgent OS (LangGraph State Machine)
-        E --> F[Supervisor Router Node]
-        F --> G[Researcher Agent Node]
-        G --> H[Coder Agent Node]
-        H --> I[Critic Auditor Node]
-        I -->|Self-Correction Cycle| H
-        I -->|Audit Passed| J[Human Approval Gate]
-        J --> K[Durable Final Delivery]
+    subgraph P2["Phase 2: NexusAgent OS (LangGraph State Machine)"]
+        E --> F["Supervisor Router Node"]
+        F --> G["Researcher Agent Node"]
+        G --> H["Coder Agent Node"]
+        H --> I["Critic Auditor Node"]
+        I -->|"Self-Correction Cycle"| H
+        I -->|"Audit Passed"| J["Human Approval Gate"]
+        J --> K["Durable Final Delivery"]
     end
 ```
 
@@ -73,7 +73,7 @@ Copy `.env.example` to `.env` and set your API keys:
 ```bash
 cp .env.example .env
 ```
-*(Supports Google Gemini free tier from [aistudio.google.com](https://aistudio.google.com/), Groq, or OpenAI!)*
+*(Supports Google Gemini free tier from [Google AI Studio](https://aistudio.google.com/), Groq, or OpenAI!)*
 
 ---
 

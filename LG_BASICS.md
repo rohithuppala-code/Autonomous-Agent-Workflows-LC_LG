@@ -28,16 +28,16 @@ Regular LangChain cannot easily do loops, branching, and pausing.
 Here are the 5 core ideas of LangGraph:
 
 ```mermaid
-graph TD
-    Start([Order Arrives]) --> Whiteboard[(Shared Whiteboard / State)]
-    Whiteboard --> ResearchStation[Node 1: Researcher Chef]
-    ResearchStation --> WriterStation[Node 2: Writer Chef]
-    WriterStation --> CriticStation[Node 3: Critic Chef]
+flowchart TD
+    Start(["Order Arrives"]) --> Whiteboard[("Shared Whiteboard / State")]
+    Whiteboard --> ResearchStation["Node 1: Researcher Chef"]
+    ResearchStation --> WriterStation["Node 2: Writer Chef"]
+    WriterStation --> CriticStation["Node 3: Critic Chef"]
     
-    CriticStation --> Decision{Is the dish perfect?}
-    Decision -->|Needs Fixes (CYCLE)| WriterStation
-    Decision -->|Approved!| HITL[Human Review Gate]
-    HITL -->|Boss Approves| Serve([Serve to Customer])
+    CriticStation --> Decision{"Is the dish perfect?"}
+    Decision -->|"Needs Fixes (CYCLE)"| WriterStation
+    Decision -->|"Approved!"| HITL["Human Review Gate"]
+    HITL -->|"Boss Approves"| Serve(["Serve to Customer"])
 ```
 
 ---

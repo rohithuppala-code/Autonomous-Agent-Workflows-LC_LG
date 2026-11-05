@@ -164,7 +164,7 @@ Every single feature you ever build with LangChain is built by snapping together
 
 ---
 
-*Next step: When your kitchen grows from 1 conveyor belt to 10 specialized chefs who argue, review, and collaborate—you need **LangGraph**! See `LG_BASICS.md`.*
+*Next step: When your kitchen grows from 1 conveyor belt to 10 specialized chefs who argue, review, and collaborate—you need **LangGraph**! See [LG_BASICS.md](LG_BASICS.md).*
 
 ---
 

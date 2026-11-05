@@ -48,3 +48,4 @@ def get_thread_state_history(
         ]
     except Exception:
         return []
+
