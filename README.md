@@ -167,15 +167,65 @@ cp .env.example .env
 
 ---
 
-## 🎮 Running the Applications
+## 🎮 Interactive CLI Walkthrough (The 4 Options Explained)
 
-### Run Phase 2: NexusAgent OS (LangGraph Multi-Agent Team)
+The primary entrypoint for running the entire multi-agent system is the **Command Line Interface (CLI)**:
+
 ```bash
 python -m nexus_agent.cli
 ```
-*Choose Option 1 to watch the autonomous team stream live, or Option 2 to test the Human Approval Gate!*
 
-### Run Phase 1: CogniFlow CLI (LangChain)
+When you execute this command, an interactive menu appears in your terminal:
+
+```text
+Select an action for NexusAgent OS:
+  [1] 🤖 Run Autonomous Multi-Agent Goal (Full Team Stream)
+  [2] 🛑 Run Goal with Human-in-the-Loop (HITL Approval Gate)
+  [3] 🗺️ View Graph Architecture & Specialist Topology
+  [4] 📸 Inspect State Persistence & Checkpoints
+  [0] 🚪 Exit
+```
+
+Here is exactly what happens when you pick each option, along with short, easy examples:
+
+---
+
+### 🔹 Option [1]: 🤖 Autonomous Multi-Agent Goal (Full Autopilot)
+* **What happens**: The entire team runs from start to finish on full autopilot. The Supervisor plans, the Researcher searches the live web, the Coder writes the script, the Critic audits and self-heals any bugs, and the final deliverable is printed automatically.
+* **Short Example**:
+  - *You type*: `"Analyze the top 3 Python web frameworks in 2026 and write a benchmark test script."`
+  - *Outcome*: The agents research FastAPI vs Django vs Litestar, synthesize the benchmark code, self-heal any syntax errors, and print the finished package to your terminal.
+
+---
+
+### 🔹 Option [2]: 🛑 Human-in-the-Loop (HITL Approval Gate)
+* **What happens**: The agents do all the heavy lifting, but the system **stops dead in its tracks** right before publishing. It displays the audited deliverable on your screen and waits for YOUR personal sign-off before proceeding.
+* **Short Example**:
+  - *You type*: `"Write an automated script to delete expired user sessions from a database."`
+  - *Outcome*: The agents draft and audit the code. The terminal then displays a yellow alert:
+    `"🛑 Execution PAUSED at Human Approval Gate. Approve deliverable for release? [Y/n]:"`
+    You type `Y` to approve and save, or `n` to reject!
+
+---
+
+### 🔹 Option [3]: 🗺️ View Graph Architecture & Specialist Topology
+* **What happens**: Instantly prints a structured terminal table showing every agent node, its exact role, its assigned tools, and its routing rules—without making any LLM API calls.
+* **Short Example**:
+  - *You type*: `3`
+  - *Outcome*: You see a live breakdown of `supervisor` ➔ `researcher` ➔ `coder` ➔ `critic` ➔ `human_gate`. Great for quickly explaining the architecture in code walkthroughs or interviews!
+
+---
+
+### 🔹 Option [4]: 📸 Inspect State Persistence & Checkpoints (Time-Travel)
+* **What happens**: Lets you inspect the historical state snapshots saved in the SQLite checkpointer vault for any previous session.
+* **Short Example**:
+  - *You type*: `4`, then enter your session Thread ID (e.g. `nexus_3f1a9b2c`).
+  - *Outcome*: A table appears showing the exact Quality Score, Active Worker, and State Data recorded after every single node execution, proving the system can resume from crashes or perform time-travel debugging.
+
+---
+
+### 🔹 Running Phase 1 (Solo Assistant):
+To test the LangChain Core solo assistant (structured extraction, parallel LCEL reasoning, or ReAct tools):
 ```bash
 python -m cogniflow.cli
 ```
