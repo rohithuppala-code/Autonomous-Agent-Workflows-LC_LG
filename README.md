@@ -10,181 +10,143 @@ A progressive, end-to-end production repository designed to master modern LLM ap
 
 ---
 
-## 🗺️ Master Codebase Architecture & File Mapping
+## 🗺️ How NexusAgent OS Works: The Visual Lifecycle
 
-Here is the complete blueprint showing **every single file** in the repository, its architectural role, and how it connects into the system:
+> 💡 **How to read this diagram**: Follow the numbers from **1️⃣ START** to **7️⃣ DELIVERED**! Every card shows the **exact Python file** responsible for that step.
 
 ```mermaid
 flowchart TD
-    %% Styling Classes
-    classDef supervisor fill:#6366F1,stroke:#4338CA,stroke-width:2px,color:#FFFFFF,font-weight:bold;
-    classDef researcher fill:#0EA5E9,stroke:#0284C7,stroke-width:2px,color:#FFFFFF,font-weight:bold;
-    classDef coder fill:#F59E0B,stroke:#B45309,stroke-width:2px,color:#FFFFFF,font-weight:bold;
-    classDef critic fill:#EF4444,stroke:#B91C1C,stroke-width:2px,color:#FFFFFF,font-weight:bold;
-    classDef human fill:#10B981,stroke:#047857,stroke-width:2px,color:#FFFFFF,font-weight:bold;
-    classDef state fill:#1E293B,stroke:#475569,stroke-width:2px,color:#F8FAFC;
-    classDef chain fill:#8B5CF6,stroke:#6D28D9,stroke-width:2px,color:#FFFFFF;
-    classDef tool fill:#14B8A6,stroke:#0F766E,stroke-width:2px,color:#FFFFFF;
+    %% Theme-Safe High-Contrast Styling (100% readable in both GitHub Light & Dark mode)
+    classDef startNode fill:#15803D,stroke:#166534,stroke-width:2px,color:#FFFFFF,font-weight:bold;
+    classDef supervisorNode fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px,color:#0F172A,font-weight:bold;
+    classDef researcherNode fill:#E0F2FE,stroke:#0284C7,stroke-width:2px,color:#0F172A,font-weight:bold;
+    classDef coderNode fill:#FEF3C7,stroke:#D97706,stroke-width:2px,color:#0F172A,font-weight:bold;
+    classDef criticNode fill:#FEE2E2,stroke:#DC2626,stroke-width:2px,color:#0F172A,font-weight:bold;
+    classDef humanNode fill:#D1FAE5,stroke:#059669,stroke-width:2px,color:#0F172A,font-weight:bold;
+    classDef decisionNode fill:#F1F5F9,stroke:#475569,stroke-width:2px,color:#0F172A,font-weight:bold;
+    classDef finishNode fill:#0F172A,stroke:#000000,stroke-width:2px,color:#FFFFFF,font-weight:bold;
+    classDef storageNode fill:#F8FAFC,stroke:#64748B,stroke-width:2px,color:#0F172A;
 
-    subgraph PHASE1["📦 Phase 1: cogniflow/ (LangChain Core & LCEL)"]
-        CFG["⚙️ config/settings.py<br/>Reads .env, validates API keys"]:::chain
-        MOD["🧠 models/factory.py<br/>ModelFactory: Gemini / OpenAI / Groq"]:::chain
-        PRM["📋 prompts/templates.py<br/>ChatPromptTemplates & personas"]:::chain
-        SCH["🍱 schemas/outputs.py<br/>Pydantic models for structured output"]:::chain
-        CHN["⚡ chains/structured_chain.py<br/>LCEL pipe chains (|) & parallel reasoning"]:::chain
-        TLS["🛠️ tools/web_search.py & calculator.py<br/>Safe math, DuckDuckGo & Wikipedia tools"]:::tool
-        MEM["📝 memory/session.py<br/>RunnableWithMessageHistory session state"]:::chain
-        AGT["🤖 agents/react_agent.py<br/>ReAct autonomous tool-calling loop"]:::chain
-        CLI1["🖥️ cli.py<br/>Interactive Rich Terminal App"]:::chain
+    START(["🟢 1. START HERE: User Objective"]):::startNode
+    SUP["👑 2. SUPERVISOR (nexus_agent/nodes/supervisor.py)<br/>• Reads goal<br/>• Creates 3-milestone plan<br/>• Dispatches first specialist"]:::supervisorNode
+    RES["🔍 3. RESEARCHER (nexus_agent/nodes/researcher.py)<br/>• Searches live web via DuckDuckGo<br/>• Gathers benchmarks & real-world facts"]:::researcherNode
+    COD["💻 4. CODER (nexus_agent/nodes/coder.py)<br/>• Writes Python implementation<br/>• Patches bugs flagged by Critic"]:::coderNode
+    CRT["🧐 5. CRITIC AUDITOR (nexus_agent/nodes/critic.py)<br/>• Audits code & facts<br/>• Grades quality from 1.0 to 10.0"]:::criticNode
+    DEC{"⚖️ Router: Did quality pass?<br/>(nexus_agent/edges/router.py)"}:::decisionNode
+    HGT["🛡️ 6. HUMAN APPROVAL GATE (nexus_agent/nodes/human_gate.py)<br/>• Pauses graph execution<br/>• Asks YOU: Approve or Reject?"]:::humanNode
+    FINISH(["🏁 7. DELIVERED: Verified Artifact"]):::finishNode
+    SAV[("📸 CHECKPOINT VAULT (nexus_agent/checkpoints/memory_saver.py)<br/>Saves state snapshot to SQLite for time-travel")]:::storageNode
 
-        CFG --> MOD
-        MOD --> CHN
-        PRM --> CHN
-        SCH --> CHN
-        TLS --> AGT
-        MEM --> AGT
-        CHN --> CLI1
-        AGT --> CLI1
-    end
+    START --> SUP
+    SUP -->|"Dispatches research task"| RES
+    RES -->|"Hands off factual findings"| COD
+    COD -->|"Submits code solution"| CRT
+    CRT --> DEC
 
-    subgraph PHASE2["🕸️ Phase 2: nexus_agent/ (LangGraph Multi-Agent OS)"]
-        STT[("📋 state/agent_state.py<br/>The Shared Whiteboard (TypedDict & add_messages)")]:::state
-        SUP["👑 nodes/supervisor.py<br/>Decomposes goals, routes specialists"]:::supervisor
-        RES["🔍 nodes/researcher.py<br/>Gathers live web facts via DuckDuckGo"]:::researcher
-        COD["💻 nodes/coder.py<br/>Synthesizes code & patches bugs"]:::coder
-        CRT["🧐 nodes/critic.py<br/>Quality auditor (1-10) & issue detector"]:::critic
-        HGT["🛡️ nodes/human_gate.py<br/>Human-in-the-Loop review & sign-off"]:::human
-        RTR{"🚦 edges/router.py<br/>Conditional routing & self-correction"}:::supervisor
-        SAV[("📸 checkpoints/memory_saver.py<br/>SQLite & MemorySaver state time-travel")]:::state
-        BLD["🕸️ graph/builder.py<br/>StateGraph compilation & interrupt gates"]:::supervisor
-        CLI2["🚀 cli.py<br/>Real-time streaming multi-agent terminal"]:::supervisor
+    %% Self-Correction Cycle Loop
+    DEC -->|"❌ Score < 8.0: Self-Healing Loop (Retry)"| COD
+    DEC -->|"✅ Score >= 8.0: Audit Passed"| HGT
 
-        STT <--> SUP
-        STT <--> RES
-        STT <--> COD
-        STT <--> CRT
-        STT <--> HGT
-
-        SUP --> RTR
-        RTR -->|"Assign Research"| RES
-        RTR -->|"Assign Implementation"| COD
-        RTR -->|"Assign Quality Audit"| CRT
-        RES --> COD
-        COD --> CRT
-        CRT --> RTR
-        RTR -->|"Quality Passed >= 8.0"| HGT
-        RTR -->|"Quality Failed < 8.0 (Loop)"| COD
-        HGT --> SAV
-        BLD --> CLI2
-    end
+    %% Human in the loop gate
+    HGT -->|"Developer clicks Approve"| FINISH
+    FINISH -.->|"Auto-persisted"| SAV
 ```
 
 ---
 
-## ⚡ Real-World End-to-End Execution Scenario
+## 🗂️ File-to-Role Cheat Sheet (What File Does What?)
 
-Here is an exact step-by-step trace of how the multi-agent system executes a real user goal, catches an error, fixes itself, and pauses for human approval:
+If you are browsing the code, here is exactly where each piece lives and what it does:
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User as 👤 Developer
-    participant Supervisor as 👑 Supervisor Node<br/>(supervisor.py)
-    participant State as 📋 Shared State<br/>(agent_state.py)
-    participant Researcher as 🔍 Researcher Node<br/>(researcher.py)
-    participant Coder as 💻 Coder Node<br/>(coder.py)
-    participant Critic as 🧐 Critic Node<br/>(critic.py)
-    participant HumanGate as 🛡️ Human Gate<br/>(human_gate.py)
-    participant Checkpoint as 📸 Checkpointer<br/>(memory_saver.py)
-
-    User->>Supervisor: "Build a Vector DB benchmark script with live facts"
-    Note over Supervisor: Decomposes goal into 3 milestones
-    Supervisor->>State: Writes task_plan & next_worker = 'researcher'
-
-    State->>Researcher: Triggers Researcher specialist
-    Researcher->>Researcher: Invokes DuckDuckGo & Wikipedia tools
-    Researcher->>State: Writes research_data (latency metrics, specs)
-
-    State->>Coder: Dispatches to Coder specialist
-    Coder->>Coder: Writes Python benchmark script
-    Coder->>State: Writes code_solution (Draft 1)
-
-    State->>Critic: Dispatches to Critic Auditor
-    Note over Critic: Audits code syntax & factual claims
-    Critic-->>Critic: Detects KeyError on metric parser! (Score: 6.5/10)
-    Critic->>State: Writes critic_review & requests revision
-
-    %% The Self-Healing Loop
-    rect rgb(254, 242, 242)
-        Note over Coder, Critic: 🔄 Self-Correction Cycle (Cyclic Loop)
-        State->>Coder: Loops back with exact bug traceback
-        Coder->>Coder: Patches line 14 dictionary parser
-        Coder->>State: Writes code_solution (Draft 2)
-        State->>Critic: Re-audits patched code
-        Critic-->>Critic: All tests pass! (Score: 9.2/10.0)
-        Critic->>State: Writes approved = True & compiles final_artifact
-    end
-
-    %% Human-in-the-Loop
-    rect rgb(236, 253, 245)
-        Note over HumanGate, User: 🛑 Human-in-the-Loop (HITL) Gate
-        State->>HumanGate: Reaches approval boundary (Graph Interrupts!)
-        HumanGate->>User: Halts and displays proposed deliverable: [Approve / Reject]
-        User->>HumanGate: Types "Yes (Approved)"
-        HumanGate->>State: Sets human_approved = True
-    end
-
-    State->>Checkpoint: Takes state snapshot to SQLite for time-travel
-    State->>User: 🎉 Delivers verified, bug-free production artifact!
-```
+| Step | File Path | Architectural Role | Plain-English Job Description |
+|:---:|---|---|---|
+| **Whiteboard** | [`nexus_agent/state/agent_state.py`](nexus_agent/state/agent_state.py) | **Central State** | The shared whiteboard dictionary holding all messages, drafts, scores, and logs. |
+| **Step 1** | [`nexus_agent/nodes/supervisor.py`](nexus_agent/nodes/supervisor.py) | **👑 Supervisor** | The team manager. Decomposes the user prompt into milestones and decides who works next. |
+| **Step 2** | [`nexus_agent/nodes/researcher.py`](nexus_agent/nodes/researcher.py) | **🔍 Researcher** | Gathers live data from the internet using DuckDuckGo search and Wikipedia. |
+| **Step 3** | [`nexus_agent/nodes/coder.py`](nexus_agent/nodes/coder.py) | **💻 Coder** | Writes modular Python code. When the critic finds a bug, the coder rewrites and fixes it. |
+| **Step 4** | [`nexus_agent/nodes/critic.py`](nexus_agent/nodes/critic.py) | **🧐 Critic Auditor** | Inspects code and facts, searches for bugs, and assigns a strict score (1.0 to 10.0). |
+| **Step 5** | [`nexus_agent/edges/router.py`](nexus_agent/edges/router.py) | **🚦 Dynamic Router** | The crossroad. If score < 8.0, it routes back to Coder. If score ≥ 8.0, it proceeds to Human Gate. |
+| **Step 6** | [`nexus_agent/nodes/human_gate.py`](nexus_agent/nodes/human_gate.py) | **🛡️ Human Gate** | Interrupts the autonomous run to let a real human inspect and approve before release. |
+| **Storage** | [`nexus_agent/checkpoints/memory_saver.py`](nexus_agent/checkpoints/memory_saver.py) | **📸 Checkpointer** | Saves state history to SQLite after every node for resume capability and time-travel. |
+| **Assembly** | [`nexus_agent/graph/builder.py`](nexus_agent/graph/builder.py) | **🕸️ Graph Builder** | Connects all nodes, conditional edges, and compile settings into a runnable state machine. |
+| **Terminal** | [`nexus_agent/cli.py`](nexus_agent/cli.py) | **🚀 Interactive UI** | Beautiful Rich terminal application to run goals and view live streaming agent events. |
 
 ---
 
-## 📁 Repository Directory & Component Breakdown
+## ⚡ Step-by-Step Example Scenario: "Build a Vector DB Benchmark"
+
+Here is what happens behind the scenes when you submit a real request to the system:
 
 ```text
-Autonomous-Agent-Workflows-LC_LG/
-├── LC_BASICS.md                    # 🍳 LangChain explained like a story (Chef & Conveyor Belt)
-├── LG_BASICS.md                    # 🕸️ LangGraph explained like a story (5-Star Restaurant Team)
-├── README.md                       # 📖 Master architecture, diagrams, and quickstart
-├── requirements.txt                # 📦 Dependencies (LangChain, LangGraph, Gemini, Groq, Rich)
-├── .env.example                    # 🔑 Multi-provider API key blueprint
-│
-├── cogniflow/                      # 🔹 PHASE 1: LangChain Core & LCEL Pipeline
-│   ├── config/settings.py          # Environment validation & provider selection
-│   ├── models/factory.py           # ModelFactory (Gemini, OpenAI, Groq)
-│   ├── prompts/templates.py        # System personas & ChatPromptTemplates
-│   ├── schemas/outputs.py          # Pydantic schemas (ResearchReport, FactCheckResult)
-│   ├── chains/structured_chain.py  # LCEL chains with .with_structured_output()
-│   ├── chains/parallel_chain.py    # RunnableParallel dual-branch reasoning
-│   ├── tools/web_search.py         # Live DuckDuckGo & Wikipedia information tools
-│   ├── tools/calculator.py         # Safe AST mathematical evaluation tools
-│   ├── tools/registry.py           # Tool groupings and bindings
-│   ├── memory/session.py           # Multi-turn conversational session history
-│   ├── agents/react_agent.py       # ReAct autonomous tool-calling loop
-│   └── cli.py                      # Interactive Rich terminal dashboard
-│
-├── nexus_agent/                    # 🔹 PHASE 2: LangGraph Autonomous Multi-Agent OS
-│   ├── state/agent_state.py        # TypedDict shared state & add_messages reducers
-│   ├── nodes/supervisor.py         # Executive planner & worker dispatcher
-│   ├── nodes/researcher.py         # Live intelligence & factual researcher node
-│   ├── nodes/coder.py              # Technical code synthesis & self-healing node
-│   ├── nodes/critic.py             # Strict numerical quality auditor (1.0 - 10.0)
-│   ├── nodes/human_gate.py         # Human-in-the-Loop (HITL) pause-and-resume gate
-│   ├── edges/router.py             # Conditional routing & cyclic feedback loops
-│   ├── checkpoints/memory_saver.py # SQLite & MemorySaver state time-travel persistence
-│   ├── graph/builder.py            # StateGraph compilation & interrupt configuration
-│   └── cli.py                      # Real-time streaming multi-agent terminal runner
-│
-└── tests/                          # 🧪 Automated Test Suite (21 Passing Tests)
-    ├── test_schemas.py             # Pydantic schema validation tests
-    ├── test_tools.py               # AST calculator & safe math tests
-    ├── test_prompts.py             # Prompt formatting tests
-    ├── test_memory.py              # Session memory isolation tests
-    ├── test_nexus_state.py         # Multi-agent state schema tests
-    ├── test_nexus_nodes.py         # Individual agent node execution tests
-    └── test_nexus_graph.py         # End-to-end StateGraph cyclic execution tests
+1. 👤 YOU TYPE: "Analyze Pinecone vs Chroma, write a benchmark script, and verify it."
+
+2. 👑 SUPERVISOR NODE:
+   - Decomposes the goal into 3 milestones:
+     [1] Gather latency and indexing specs for Pinecone & Chroma.
+     [2] Write a Python benchmark script measuring queries per second.
+     [3] Audit code for syntax errors and edge cases.
+   - Assigns next worker: "researcher".
+
+3. 🔍 RESEARCHER NODE:
+   - Searches DuckDuckGo for: "Pinecone vs Chroma benchmark latency specs".
+   - Saves empirical metrics and findings onto the shared whiteboard.
+   - Hands off to: "coder".
+
+4. 💻 CODER NODE (Draft 1):
+   - Synthesizes a Python benchmark script using the retrieved latency numbers.
+   - Submits draft to the whiteboard.
+   - Hands off to: "critic".
+
+5. 🧐 CRITIC AUDITOR NODE:
+   - Evaluates the draft.
+   - ⚠️ FOUND AN ISSUE: "Line 14 tries to parse latency as a string instead of float!"
+   - Score: 6.5 / 10.0 (Status: FAILED).
+   - 🔄 TRIGGERS SELF-HEALING LOOP: Routes back to "coder" with the exact bug traceback!
+
+6. 💻 CODER NODE (Draft 2 - Self-Correction):
+   - Reads the critic's bug description.
+   - Casts latency to float(latency_ms) and adds exception handling.
+   - Submits patched code to the whiteboard.
+
+7. 🧐 CRITIC AUDITOR NODE (Re-Audit):
+   - All tests pass! No syntax errors, facts verified.
+   - Score: 9.2 / 10.0 (Status: APPROVED ✅).
+   - Hands off to: "human_gate".
+
+8. 🛡️ HUMAN APPROVAL GATE:
+   - The autonomous system PAUSES completely.
+   - Your terminal displays:
+     "Audited deliverable ready (Score 9.2/10). Approve for release? [Y/n]:"
+   - You type: "Y".
+
+9. 🏁 RESULT:
+   - The state is saved to the SQLite checkpoint vault.
+   - The final, verified, bug-free deliverable is published to your terminal!
 ```
+
+---
+
+## 🍳 Phase 1 Overview: `cogniflow/` (LangChain Core)
+
+Before moving to multi-agent graphs, the repository includes **CogniFlow**, demonstrating foundational LangChain primitives:
+
+```mermaid
+flowchart LR
+    classDef lcBox fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px,color:#0F172A,font-weight:bold;
+    classDef lcTool fill:#FEF3C7,stroke:#D97706,stroke-width:2px,color:#0F172A,font-weight:bold;
+    classDef lcOut fill:#D1FAE5,stroke:#059669,stroke-width:2px,color:#0F172A,font-weight:bold;
+
+    U["👤 User Input"]:::lcBox --> P["📋 PromptTemplate<br/>(prompts/templates.py)"]:::lcBox
+    P --> M["🧠 ModelFactory<br/>(models/factory.py)"]:::lcBox
+    M <--> T["🛠️ Tools: Web Search & Safe Math<br/>(tools/web_search.py)"]:::lcTool
+    M --> S["🍱 Pydantic Output<br/>(schemas/outputs.py)"]:::lcOut
+    S --> C["🖥️ Rich Terminal CLI<br/>(cogniflow/cli.py)"]:::lcOut
+```
+
+- **Universal LLM Factory**: Hot-swap between Google Gemini, OpenAI, and Groq without rewriting code.
+- **Pydantic Structured Extraction**: Clean, typed JSON data models instead of unpredictable raw text.
+- **LCEL Declarative Pipelines**: Chaining with `|`, `RunnableParallel`, and `RunnablePassthrough`.
+- **Conversational Memory**: Isolated chat history sessions via `RunnableWithMessageHistory`.
 
 ---
 
@@ -207,14 +169,15 @@ cp .env.example .env
 
 ## 🎮 Running the Applications
 
+### Run Phase 2: NexusAgent OS (LangGraph Multi-Agent Team)
+```bash
+python -m nexus_agent.cli
+```
+*Choose Option 1 to watch the autonomous team stream live, or Option 2 to test the Human Approval Gate!*
+
 ### Run Phase 1: CogniFlow CLI (LangChain)
 ```bash
 python -m cogniflow.cli
-```
-
-### Run Phase 2: NexusAgent OS CLI (LangGraph Multi-Agent Team)
-```bash
-python -m nexus_agent.cli
 ```
 
 ---
@@ -225,4 +188,4 @@ Run the full automated test suite (21 unit tests covering both systems):
 ```bash
 pytest -v tests/
 ```
-All 21 unit tests verify schema validation, safe tools, memory isolation, individual agent nodes, and end-to-end LangGraph execution!
+All 21 unit tests verify schema validation, safe tools, memory isolation, individual agent nodes, and end-to-end LangGraph state machine execution!
