@@ -1,6 +1,6 @@
-# 🧠 GenAI Engineering Masterclass: LangChain & LangGraph
+# 🧠 Autonomous Agentic Workflows & Multi-Agent OS (LC_LG)
 
-A progressive, end-to-end repository designed to master modern LLM application development, agentic workflows, and multi-agent coordination.
+A progressive, end-to-end production repository designed to master modern LLM application development, agentic workflows, and multi-agent coordination using **LangChain** and **LangGraph**.
 
 ---
 
